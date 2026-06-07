@@ -26,9 +26,9 @@
             <span>Google Classroom</span>
         </div>
         <div class="server-selector">
-            <button class="btn" onclick="changeServer('https://inv.nadeko.net')">채널 A (추천)</button>
-            <button class="btn" onclick="changeServer('https://invidious.nerdvpn.de')">채널 B</button>
-            <button class="btn" onclick="changeServer('https://invidious.flokinet.to')">채널 C</button>
+            <button class="btn" onclick="changeServer('https://invidious.flokinet.to')">우회 통로 A</button>
+            <button class="btn" onclick="changeServer('https://iv.melmac.space')">우회 통로 B</button>
+            <button class="btn" onclick="changeServer('https://invidious.nerdvpn.de')">우회 통로 C</button>
         </div>
     </header>
 
@@ -36,9 +36,9 @@
         <div class="classroom-card">
             <div class="card-header">
                 <span>과제 자료: 원격 교육 시청각 교재 학습</span>
-                <span id="status-text" style="color: #5f6368;">안전 모드동 중</span>
+                <span id="status-text" style="color: #5f6368;">안전 모드 작동 중</span>
             </div>
-            <iframe id="classroom-frame" src="https://inv.nadeko.net" allowfullscreen></iframe>
+            <iframe id="classroom-frame" src="https://invidious.flokinet.to" allowfullscreen></iframe>
         </div>
     </div>
 
@@ -46,7 +46,7 @@
         function changeServer(url) {
             const frame = document.getElementById('classroom-frame');
             const status = document.getElementById('status-text');
-            status.innerText = "서버 전환 중...";
+            status.innerText = "통로 전환 중...";
             frame.src = url;
             setTimeout(() => { status.innerText = "안전 모드 작동 중"; }, 1000);
         }
