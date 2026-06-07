@@ -24,8 +24,10 @@
         .video-card img { width: 100%; height: auto; display: block; }
         .video-info { padding: 10px; }
         .video-title { font-size: 14px; font-weight: bold; margin-bottom: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        
+        /* 플레이어를 iframe에서 HTML5 비디오 태그 스타일로 변경 */
         .player-container { max-width: 800px; margin: 0 auto 20px; display: none; }
-        .player-container iframe { width: 100%; aspect-ratio: 16/9; border: none; }
+        .player-container video { width: 100%; aspect-ratio: 16/9; background: black; }
     </style>
 </head>
 <body>
@@ -41,7 +43,7 @@
 
     <div id="secretContent">
         <div class="player-container" id="playerContainer">
-            <iframe id="videoPlayer" src="" allowfullscreen></iframe>
+            <video id="videoPlayer" controls autoplay></video>
         </div>
 
         <div class="search-box">
@@ -55,18 +57,17 @@
     <script>
         // 키 입력 감지 시스템
         let inputBuffer = "";
-        const secretCode = "devilusesthis"; // 비밀 코드
+        const secretCode = "devilusesthis"; 
 
         window.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
                 if (inputBuffer === secretCode) {
-                    // 일치하면 404 숨기고 유튜브 화면 활성화
                     document.getElementById("fake404").style.display = "none";
                     document.body.style.backgroundColor = "#181818";
                     document.body.style.display = "block";
                     document.getElementById("secretContent").style.display = "block";
                 }
-                inputBuffer = ""; // 버퍼 초기화
+                inputBuffer = ""; 
             } else {
                 if (e.key.length === 1) {
                     inputBuffer += e.key;
@@ -74,7 +75,7 @@
             }
         });
 
-        // 생성하신 Cloudflare Worker 비밀 서버 주소 적용
+        // 본인의 Cloudflare Worker 주소
         const proxyInstance = "https://gentle-shadow-d519.w0nminzus.workers.dev"; 
 
         async function searchVideos() {
@@ -85,7 +86,6 @@
             grid.innerHTML = "<p style='text-align:center; width:100%; color:#aaa;'>검색 중...</p>";
 
             try {
-                // 내 비밀 서버를 통해 안전하게 우회 검색 요청
                 const response = await fetch(`${proxyInstance}/api/v1/search?q=${encodeURIComponent(query)}&type=video`);
                 const data = await response.json();
 
@@ -112,19 +112,37 @@
                     grid.appendChild(card);
                 });
             } catch (error) {
-                grid.innerHTML = "<p style='text-align:center; width:100%; color:red;'>에러가 발생했습니다. 비밀 서버 설정을 다시 확인해 주세요.</p>";
+                grid.innerHTML = "<p style='text-align:center; width:100%; color:red;'>에러가 발생했습니다. 잠시 후 다시 시도해 주세요.</p>";
                 console.error(error);
             }
         }
 
-        function playVideo(videoId) {
+        // 비디오 스트리밍 주소를 직접 파싱하여 재생하는 로직
+        async function playVideo(videoId) {
             const container = document.getElementById('playerContainer');
             const player = document.getElementById('videoPlayer');
             
-            // 내 비밀 서버를 통해 영상 플레이어 임베드 우회 호출
-            player.src = `${proxyInstance}/embed/${videoId}?autoplay=1`;
-            container.style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            try {
+                // 동영상 상세 정보 API 호출
+                const response = await fetch(`${proxyInstance}/api/v1/videos/${videoId}`);
+                const data = await response.json();
+                
+                // 재생 가능한 원본 비디오 스트림 주소 찾기
+                if (data.formatStreams && data.formatStreams.length > 0) {
+                    // 가장 첫 번째 스트림(보통 360p 또는 720p mp4) 주소를 가져옴
+                    const videoUrl = data.formatStreams[0].url;
+                    
+                    // 브라우저가 거부하는 iframe 대신, 내 사이트 내부의 video 태그에 직접 데이터 주입
+                    player.src = videoUrl;
+                    container.style.display = 'block';
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                } else {
+                    alert("재생 가능한 비디오 스트림을 찾을 수 없습니다.");
+                }
+            } catch (error) {
+                alert("영상을 불러오는 중 오류가 발생했습니다.");
+                console.error(error);
+            }
         }
     </script>
 </body>
