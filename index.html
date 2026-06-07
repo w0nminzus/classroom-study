@@ -55,29 +55,27 @@
     <script>
         // 키 입력 감지 시스템
         let inputBuffer = "";
-        const secretCode = "devilusesthis"; // 여기에 입력할 비밀 코드를 설정
+        const secretCode = "devilusesthis"; // 비밀 코드
 
         window.addEventListener("keydown", (e) => {
-            // 엔터키를 누르면 확인
             if (e.key === "Enter") {
                 if (inputBuffer === secretCode) {
-                    // 일치하면 404 숨기고 유튜브 화면 띄우기
+                    // 일치하면 404 숨기고 유튜브 화면 활성화
                     document.getElementById("fake404").style.display = "none";
-                    document.body.style.backgroundColor = "#181818"; // 배경색 변경
+                    document.body.style.backgroundColor = "#181818";
                     document.body.style.display = "block";
                     document.getElementById("secretContent").style.display = "block";
                 }
                 inputBuffer = ""; // 버퍼 초기화
             } else {
-                // 엔터가 아니면 입력된 글자를 버퍼에 추가 (단, 일반 알파벳/숫자 글자만 추가)
                 if (e.key.length === 1) {
                     inputBuffer += e.key;
                 }
             }
         });
 
-        // --- 유튜브 API 연동 로직 (이전과 동일) ---
-        const proxyInstance = "https://invidious.perennialte.ch"; 
+        // 생성하신 Cloudflare Worker 비밀 서버 주소 적용
+        const proxyInstance = "https://gentle-shadow-d519.w0nminzus.workers.dev"; 
 
         async function searchVideos() {
             const query = document.getElementById('searchQuery').value;
@@ -87,6 +85,7 @@
             grid.innerHTML = "<p style='text-align:center; width:100%; color:#aaa;'>검색 중...</p>";
 
             try {
+                // 내 비밀 서버를 통해 안전하게 우회 검색 요청
                 const response = await fetch(`${proxyInstance}/api/v1/search?q=${encodeURIComponent(query)}&type=video`);
                 const data = await response.json();
 
@@ -113,7 +112,7 @@
                     grid.appendChild(card);
                 });
             } catch (error) {
-                grid.innerHTML = "<p style='text-align:center; width:100%; color:red;'>에러가 발생했습니다. 잠시 후 다시 시도해 주세요.</p>";
+                grid.innerHTML = "<p style='text-align:center; width:100%; color:red;'>에러가 발생했습니다. 비밀 서버 설정을 다시 확인해 주세요.</p>";
                 console.error(error);
             }
         }
@@ -122,6 +121,7 @@
             const container = document.getElementById('playerContainer');
             const player = document.getElementById('videoPlayer');
             
+            // 내 비밀 서버를 통해 영상 플레이어 임베드 우회 호출
             player.src = `${proxyInstance}/embed/${videoId}?autoplay=1`;
             container.style.display = 'block';
             window.scrollTo({ top: 0, behavior: 'smooth' });
