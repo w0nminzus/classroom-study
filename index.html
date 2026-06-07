@@ -3,37 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Classroom</title>
+    <title>Page not found · GitHub Pages</title>
     <style>
-        body { margin: 0; font-family: 'Roboto', Arial, sans-serif; background-color: #f8f9fa; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
-        header { display: flex; align-items: center; justify-content: space-between; padding: 0 24px; height: 64px; border-bottom: 1px solid #e0e0e0; background: #fff; }
-        .logo-area { display: flex; align-items: center; gap: 12px; font-size: 22px; color: #5f6368; font-weight: 400; }
-        .menu-icon { font-size: 24px; cursor: pointer; padding: 8px; }
-        .container { flex: 1; padding: 24px; display: flex; justify-content: center; align-items: flex-start; }
-        .classroom-card { width: 100%; max-width: 1280px; height: calc(100vh - 140px); background: #fff; border: 1px solid #dadce0; border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
-        .card-header { padding: 12px 24px; background: #e8f0fe; border-bottom: 1px solid #dadce0; color: #1967d2; font-size: 14px; font-weight: 500; }
-        /* 절대 연결 거부가 뜨지 않는 마법의 영역 */
-        iframe { width: 100%; flex: 1; border: none; background: #fff; }
+        /* GitHub 404 페이지 스타일 위장 */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background-color: #f9f9f9; color: #333; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; text-align: center; }
+        .error-container { max-width: 800px; padding: 20px; }
+        h1 { font-size: 80px; font-weight: 500; margin: 0; color: #24292e; }
+        p { font-size: 18px; color: #586069; margin: 10px 0 30px; }
+        .sub-text { font-size: 14px; color: #6a737d; line-height: 1.5; }
+        .sub-text a { color: #0366d6; text-decoration: none; }
+        
+        /* 숨겨진 실제 유튜브 검색기 스타일 */
+        #secretContent { display: none; background-color: #181818; color: white; width: 100vw; height: 100vh; box-sizing: border-box; padding: 20px; overflow-y: auto; text-align: left; }
+        .search-box { display: flex; max-width: 600px; margin: 0 auto 20px; }
+        .search-box input { flex: 1; padding: 12px; border: none; border-radius: 4px 0 0 4px; font-size: 16px; background: #2a2a2a; color: white; }
+        .search-box button { padding: 12px 24px; border: none; background-color: #ff0000; color: white; border-radius: 0 4px 4px 0; cursor: pointer; font-size: 16px; font-weight: bold; }
+        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .video-card { background: #212121; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s; }
+        .video-card:hover { transform: scale(1.03); }
+        .video-card img { width: 100%; height: auto; display: block; }
+        .video-info { padding: 10px; }
+        .video-title { font-size: 14px; font-weight: bold; margin-bottom: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+        .player-container { max-width: 800px; margin: 0 auto 20px; display: none; }
+        .player-container iframe { width: 100%; aspect-ratio: 16/9; border: none; }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="logo-area">
-            <span class="menu-icon">☰</span>
-            <span>Google Classroom</span>
-        </div>
-        <div style="color: #5f6368; font-size: 14px; font-weight: 500;">과제 수행 전용 브라우저</div>
-    </header>
-
-    <div class="container">
-        <div class="classroom-card">
-            <div class="card-header">
-                <span>과제 자료: 원격 교육 시청각 교재 학습 (보안 암호화 모드)</span>
-            </div>
-            <iframe id="classroom-frame" src="https://www.croxyproxy.com" allowfullscreen></iframe>
+    <div class="error-container" id="fake404">
+        <h1>404</h1>
+        <p><strong>There isn't a GitHub Pages site here.</strong></p>
+        <div class="sub-text">
+            If you're trying to publish one, read the <a href="https://docs.github.com/pages">GitHub Pages documentation</a> to learn how to set up your site.<br>
+            <span style="color:#bbb; font-size:11px; margin-top:20px; display:block;">GitHub Status — @githubstatus</span>
         </div>
     </div>
 
+    <div id="secretContent">
+        <div class="player-container" id="playerContainer">
+            <iframe id="videoPlayer" src="" allowfullscreen></iframe>
+        </div>
+
+        <div class="search-box">
+            <input type="text" id="searchQuery" placeholder="유튜브 검색어를 입력하세요..." onkeyup="if(window.event.keyCode==13){searchVideos()}">
+            <button onclick="searchVideos()">검색</button>
+        </div>
+
+        <div class="video-grid" id="videoGrid"></div>
+    </div>
+
+    <script>
+        // 키 입력 감지 시스템
+        let inputBuffer = "";
+        const secretCode = "devilusesthis"; // 여기에 입력할 비밀 코드를 설정
+
+        window.addEventListener("keydown", (e) => {
+            // 엔터키를 누르면 확인
+            if (e.key === "Enter") {
+                if (inputBuffer === secretCode) {
+                    // 일치하면 404 숨기고 유튜브 화면 띄우기
+                    document.getElementById("fake404").style.display = "none";
+                    document.body.style.backgroundColor = "#181818"; // 배경색 변경
+                    document.body.style.display = "block";
+                    document.getElementById("secretContent").style.display = "block";
+                }
+                inputBuffer = ""; // 버퍼 초기화
+            } else {
+                // 엔터가 아니면 입력된 글자를 버퍼에 추가 (단, 일반 알파벳/숫자 글자만 추가)
+                if (e.key.length === 1) {
+                    inputBuffer += e.key;
+                }
+            }
+        });
+
+        // --- 유튜브 API 연동 로직 (이전과 동일) ---
+        const proxyInstance = "https://invidious.nerdvpn.de"; 
+
+        async function searchVideos() {
+            const query = document.getElementById('searchQuery').value;
+            if (!query) return;
+
+            const grid = document.getElementById('videoGrid');
+            grid.innerHTML = "<p style='text-align:center; width:100%; color:#aaa;'>검색 중...</p>";
+
+            try {
+                const response = await fetch(`${proxyInstance}/api/v1/search?q=${encodeURIComponent(query)}&type=video`);
+                const data = await response.json();
+
+                grid.innerHTML = "";
+                if(data.length === 0) {
+                    grid.innerHTML = "<p style='text-align:center; width:100%; color:#aaa;'>결과가 없습니다.</p>";
+                    return;
+                }
+
+                data.forEach(video => {
+                    const card = document.createElement('div');
+                    card.className = 'video-card';
+                    card.onclick = () => playVideo(video.videoId);
+
+                    const thumbnail = video.videoThumbnails.find(t => t.quality === 'medium') || video.videoThumbnails[0];
+
+                    card.innerHTML = `
+                        <img src="${thumbnail.url}" alt="${video.title}">
+                        <div class="video-info">
+                            <div class="video-title">${video.title}</div>
+                            <div style="font-size:12px; color:#aaa;">${video.author}</div>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            } catch (error) {
+                grid.innerHTML = "<p style='text-align:center; width:100%; color:red;'>에러가 발생했습니다. 잠시 후 다시 시도해 주세요.</p>";
+                console.error(error);
+            }
+        }
+
+        function playVideo(videoId) {
+            const container = document.getElementById('playerContainer');
+            const player = document.getElementById('videoPlayer');
+            
+            player.src = `${proxyInstance}/embed/${videoId}?autoplay=1`;
+            container.style.display = 'block';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
 </body>
 </html>
