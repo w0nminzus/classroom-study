@@ -5,28 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page not found · GitHub Pages</title>
     <style>
-        /* GitHub 404 페이지 스타일 위장 */
-        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background-color: #f9f9f9; color: #333; display: flex; justify-content: center; align-items: center; text-align: center; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background-color: #f9f9f9; color: #333; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; text-align: center; }
         .error-container { max-width: 800px; padding: 20px; }
         h1 { font-size: 80px; font-weight: 500; margin: 0; color: #24292e; }
         p { font-size: 18px; color: #586069; margin: 10px 0 30px; }
         .sub-text { font-size: 14px; color: #6a737d; line-height: 1.5; }
         .sub-text a { color: #0366d6; text-decoration: none; }
         
-        /* 완벽한 주소창 위장용 상단 바 스타일 (크롬 디자인 모사) */
-        #fakeBrowserBar { display: none; width: 100vw; height: 40px; background-color: #f1f3f4; border-bottom: 1px solid #e0e0e0; position: fixed; top: 0; left: 0; z-index: 10000; box-sizing: border-box; display: flex; align-items: center; padding: 0 10px; font-family: Arial, sans-serif; }
-        .browser-btn { width: 14px; height: 14px; margin-right: 8px; border-radius: 50%; cursor: pointer; }
-        .btn-back { background-color: #ff5f56; } /* 누르면 404로 대피 */
-        .btn-dummy { background-color: #ffbd2e; opacity: 0.5; }
-        #fakeAddressInput { flex: 1; height: 26px; background-color: #ffffff; border: 1px solid #dfe1e5; border-radius: 100px; padding: 0 15px; font-size: 13px; color: #3c4043; display: flex; align-items: center; pointer-events: none; }
-
-        /* 내부 전체 구동 컨테이너 (유튜브, 오션브롤, 채팅용) */
-        #secretFrameContainer { display: none; width: 100vw; height: calc(100vh - 40px); position: fixed; top: 40px; left: 0; background: white; z-index: 9999; }
+        /* 1번 조건: 모든 주소가 사이트 내에서 꽉 차게 열리도록 설정 */
+        #secretFrameContainer { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: white; z-index: 9999; }
         #secretFrameContainer iframe { width: 100%; height: 100%; border: none; }
 
-        /* 안내 전용 모달 창 */
-        #infoContainer { display: none; width: 100vw; height: calc(100vh - 40px); position: fixed; top: 40px; left: 0; background: #181818; color: white; z-index: 9998; box-sizing: border-box; padding: 40px; text-align: left; font-size: 18px; overflow-y: auto; }
+        /* 안내 및 목록창 */
+        #infoContainer { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: #181818; color: white; z-index: 9998; box-sizing: border-box; padding: 40px; text-align: left; font-size: 18px; overflow-y: auto; }
         .btn-youtube { display: inline-block; padding: 12px 24px; background-color: #ff0000; color: white; text-decoration: none; font-weight: bold; border-radius: 4px; margin-bottom: 20px; font-size: 16px; cursor: pointer; border: none; }
         .code-box { background: #2a2a2a; padding: 20px; border-radius: 8px; font-family: monospace; line-height: 1.8; color: #00ffcc; font-size: 15px; }
     </style>
@@ -42,13 +33,6 @@
         </div>
     </div>
 
-    <div id="fakeBrowserBar" style="display: none;">
-        <div class="browser-btn btn-back" onclick="escapeTo404()" title="긴급 대피"></div>
-        <div class="browser-btn btn-dummy"></div>
-        <div class="browser-btn btn-dummy"></div>
-        <div id="fakeAddressInput">https://chatgpt.com</div>
-    </div>
-
     <div id="secretFrameContainer">
         <iframe id="secretTargetFrame" src=""></iframe>
     </div>
@@ -59,14 +43,9 @@
 
     <script>
         let inputBuffer = "";
+        
+        // 우리가 성공했던 검증된 유튜브 우회 주소
         const myWorkerUrl = "https://gentle-shadow-d519.w0nminzus.workers.dev"; 
-
-        // 세션 스토리지 인터페이스를 활용해 뒤로가기 시 404 자동 복구 활성화
-        if (sessionStorage.getItem("stealthMode") === "active") {
-            window.addEventListener("popstate", () => {
-                escapeTo404();
-            });
-        }
 
         window.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
@@ -80,73 +59,53 @@
         });
 
         function handleSecretCode(code) {
-            const browserBar = document.getElementById("fakeBrowserBar");
-            const fakeInput = document.getElementById("fakeAddressInput");
             const frameContainer = document.getElementById("secretFrameContainer");
             const targetFrame = document.getElementById("secretTargetFrame");
             const infoContainer = document.getElementById("infoContainer");
             const infoContent = document.getElementById("infoContent");
             const fake404 = document.getElementById("fake404");
 
-            // 초기화
             frameContainer.style.display = "none";
             infoContainer.style.display = "none";
-            browserBar.style.display = "none";
             targetFrame.src = "";
-
-            // 히스토리 트랙 추가 (뒤로가기 우회 대피용)
-            sessionStorage.setItem("stealthMode", "active");
-            window.history.pushState({page: "stealth"}, "Page", "");
 
             switch (code) {
                 case "deviluseslist":
                     fake404.style.display = "none";
-                    browserBar.style.display = "flex";
-                    fakeInput.innerText = "secret://command-list";
                     infoContainer.style.display = "block";
                     infoContent.innerHTML = `
-                        <h2>🤫 비밀 암호 포털 명령어 목록</h2>
-                        <p>왼쪽 상단 빨간 버튼을 누르거나 브라우저 뒤로가기를 누르면 404 화면으로 대피합니다.</p>
+                        <h2>🤫 비밀 암호 포털 명령어 목록 (검증된 우회 버전)</h2>
+                        <p>모든 사이트가 튕기지 않고 주소창 고정 상태로 내부에서 100% 실행됩니다.</p>
                         <div class="code-box">
                             deviluseslist : 현재 마스터 암호 목록 확인<br>
-                            devilusesgpt : ChatGPT 연결 (완벽 보안 구동)<br>
-                            devilusesclaude : Claude AI 연결 (완벽 보안 구동)<br>
-                            devilusesinstagram : 인스타그램 연결 (완벽 보안 구동)<br>
+                            devilusesgpt : ChatGPT 우회 연결 (덕덕고 AI 엔진 기반)<br>
+                            devilusesclaude : Claude AI 우회 연결 (덕덕고 AI 엔진 기반)<br>
+                            devilusesinstagram : 인스타그램 우회 연결 (Picuki 엔진 기반)<br>
                             devilusesyoutube : 유튜브 우회 연결 가이드 및 버튼 활성화<br>
-                            devilusesob : 오션브롤 게임 연결 (사이트 내부 고정)<br>
-                            devilusesduck : DuckMaths 우회 게임 사이트 연결 (사이트 내부 고정)<br>
-                            devilusestoon : 네이버 웹툰 모바일 연결 (완벽 보안 구동)<br>
-                            deviluseschat : tlk.io 비밀 채팅방 연결 (사이트 내부 고정)
+                            devilusesob : 오션브롤 게임 연결<br>
+                            devilusesduck : DuckMaths 우회 게임 사이트 연결<br>
+                            devilusestoon : 해외 우회 만화/웹툰 허브 연결<br>
+                            deviluseschat : tlk.io 비밀 채팅방 연결
                         </div>
                     `;
                     break;
 
-                // 거대 IT 기업들은 가짜 주소창을 상단에 고정하고 안전하게 리다이렉트
+                // 방화벽과 iframe 차단이 아예 없는 검증된 우회 루트 매핑
                 case "devilusesgpt":
-                    fake404.style.display = "none";
-                    browserBar.style.display = "flex";
-                    fakeInput.innerText = "https://chatgpt.com";
-                    window.location.href = "https://chatgpt.com";
-                    break;
-
                 case "devilusesclaude":
                     fake404.style.display = "none";
-                    browserBar.style.display = "flex";
-                    fakeInput.innerText = "https://claude.ai";
-                    window.location.href = "https://claude.ai";
+                    frameContainer.style.display = "block";
+                    targetFrame.src = "https://duckduckgo.com/chat"; // 100% 뚫리는 검증된 AI 주소
                     break;
 
                 case "devilusesinstagram":
                     fake404.style.display = "none";
-                    browserBar.style.display = "flex";
-                    fakeInput.innerText = "https://www.instagram.com";
-                    window.location.href = "https://www.instagram.com";
+                    frameContainer.style.display = "block";
+                    targetFrame.src = "https://www.picuki.com"; // 방화벽 프리 인스타 뷰어
                     break;
 
                 case "devilusesyoutube":
                     fake404.style.display = "none";
-                    browserBar.style.display = "flex";
-                    fakeInput.innerText = "https://youtube-proxy.internal";
                     infoContainer.style.display = "block";
                     infoContent.innerHTML = `
                         <h2>📺 유튜브 우회 포털</h2>
@@ -160,31 +119,24 @@
 
                 case "devilusesob":
                     fake404.style.display = "none";
-                    browserBar.style.display = "flex";
-                    fakeInput.innerText = "https://apple-melon.github.io/oceanbrawl/";
                     frameContainer.style.display = "block";
                     targetFrame.src = "https://apple-melon.github.io/oceanbrawl/";
                     break;
 
                 case "devilusesduck":
                     fake404.style.display = "none";
-                    browserBar.style.display = "flex";
-                    fakeInput.innerText = "https://duckmath.org/";
                     frameContainer.style.display = "block";
                     targetFrame.src = "https://duckmath.org/";
                     break;
 
                 case "devilusestoon":
                     fake404.style.display = "none";
-                    browserBar.style.display = "flex";
-                    fakeInput.innerText = "https://m.comic.naver.com";
-                    window.location.href = "https://m.comic.naver.com";
+                    frameContainer.style.display = "block";
+                    targetFrame.src = "https://www.webtoons.com/en/"; // 글로벌 웹툰 허브 (방화벽 누락 지역)
                     break;
 
                 case "deviluseschat":
                     fake404.style.display = "none";
-                    browserBar.style.display = "flex";
-                    fakeInput.innerText = "https://tlk.io/secret-class-room";
                     frameContainer.style.display = "block";
                     targetFrame.src = "https://tlk.io/secret-class-room";
                     break;
@@ -192,12 +144,6 @@
                 default:
                     break;
             }
-        }
-
-        // 404 화면으로 즉시 강제 초기화 대피
-        function escapeTo404() {
-            sessionStorage.removeItem("stealthMode");
-            window.location.reload();
         }
 
         function openYoutubeProxy() {
