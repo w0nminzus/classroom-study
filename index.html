@@ -13,21 +13,14 @@
         .sub-text { font-size: 14px; color: #6a737d; line-height: 1.5; }
         .sub-text a { color: #0366d6; text-decoration: none; }
         
-        /* 숨겨진 실제 유튜브 검색기 스타일 */
-        #secretContent { display: none; background-color: #181818; color: white; width: 100vw; height: 100vh; box-sizing: border-box; padding: 20px; overflow-y: auto; text-align: left; }
-        .search-box { display: flex; max-width: 600px; margin: 0 auto 20px; }
-        .search-box input { flex: 1; padding: 12px; border: none; border-radius: 4px 0 0 4px; font-size: 16px; background: #2a2a2a; color: white; }
-        .search-box button { padding: 12px 24px; border: none; background-color: #ff0000; color: white; border-radius: 0 4px 4px 0; cursor: pointer; font-size: 16px; font-weight: bold; }
-        .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
-        .video-card { background: #212121; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s; }
-        .video-card:hover { transform: scale(1.03); }
-        .video-card img { width: 100%; height: auto; display: block; }
-        .video-info { padding: 10px; }
-        .video-title { font-size: 14px; font-weight: bold; margin-bottom: 5px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        
-        /* 플레이어를 iframe에서 HTML5 비디오 태그 스타일로 변경 */
-        .player-container { max-width: 800px; margin: 0 auto 20px; display: none; }
-        .player-container video { width: 100%; aspect-ratio: 16/9; background: black; }
+        /* 모든 주소가 사이트 내에서 꽉 차게 열리도록 하는 컨테이너 */
+        #secretFrameContainer { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: white; z-index: 9999; }
+        #secretFrameContainer iframe { width: 100%; height: 100%; border: none; }
+
+        /* 안내 전용 모달 창 (유튜브 가이드 및 암호 리스트용) */
+        #infoContainer { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: #181818; color: white; z-index: 9998; box-sizing: border-box; padding: 40px; text-align: left; font-size: 18px; overflow-y: auto; }
+        .btn-youtube { display: inline-block; padding: 12px 24px; background-color: #ff0000; color: white; text-decoration: none; font-weight: bold; border-radius: 4px; margin-bottom: 20px; font-size: 16px; cursor: pointer; border: none; }
+        .code-box { background: #2a2a2a; padding: 20px; border-radius: 8px; font-family: monospace; line-height: 1.8; color: #00ffcc; font-size: 15px; }
     </style>
 </head>
 <body>
@@ -41,33 +34,24 @@
         </div>
     </div>
 
-    <div id="secretContent">
-        <div class="player-container" id="playerContainer">
-            <video id="videoPlayer" controls autoplay></video>
-        </div>
+    <div id="secretFrameContainer">
+        <iframe id="secretTargetFrame" src=""></iframe>
+    </div>
 
-        <div class="search-box">
-            <input type="text" id="searchQuery" placeholder="유튜브 검색어를 입력하세요..." onkeyup="if(window.event.keyCode==13){searchVideos()}">
-            <button onclick="searchVideos()">검색</button>
-        </div>
-
-        <div class="video-grid" id="videoGrid"></div>
+    <div id="infoContainer">
+        <div id="infoContent"></div>
     </div>
 
     <script>
-        // 키 입력 감지 시스템
         let inputBuffer = "";
-        const secretCode = "devilusesthis"; 
+
+        // 유튜브 재생용 Cloudflare Worker 주소
+        const myWorkerUrl = "https://gentle-shadow-d519.w0nminzus.workers.dev"; 
 
         window.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
-                if (inputBuffer === secretCode) {
-                    document.getElementById("fake404").style.display = "none";
-                    document.body.style.backgroundColor = "#181818";
-                    document.body.style.display = "block";
-                    document.getElementById("secretContent").style.display = "block";
-                }
-                inputBuffer = ""; 
+                handleSecretCode(inputBuffer);
+                inputBuffer = ""; // 버퍼 초기화
             } else {
                 if (e.key.length === 1) {
                     inputBuffer += e.key;
@@ -75,74 +59,111 @@
             }
         });
 
-        // 본인의 Cloudflare Worker 주소
-        const proxyInstance = "https://gentle-shadow-d519.w0nminzus.workers.dev"; 
+        function handleSecretCode(code) {
+            const frameContainer = document.getElementById("secretFrameContainer");
+            const targetFrame = document.getElementById("secretTargetFrame");
+            const infoContainer = document.getElementById("infoContainer");
+            const infoContent = document.getElementById("infoContent");
+            const fake404 = document.getElementById("fake404");
 
-        async function searchVideos() {
-            const query = document.getElementById('searchQuery').value;
-            if (!query) return;
+            // 호출할 때마다 이전 화면 기본 숨김 처리
+            frameContainer.style.display = "none";
+            infoContainer.style.display = "none";
+            targetFrame.src = "";
 
-            const grid = document.getElementById('videoGrid');
-            grid.innerHTML = "<p style='text-align:center; width:100%; color:#aaa;'>검색 중...</p>";
-
-            try {
-                const response = await fetch(`${proxyInstance}/api/v1/search?q=${encodeURIComponent(query)}&type=video`);
-                const data = await response.json();
-
-                grid.innerHTML = "";
-                if(data.length === 0) {
-                    grid.innerHTML = "<p style='text-align:center; width:100%; color:#aaa;'>결과가 없습니다.</p>";
-                    return;
-                }
-
-                data.forEach(video => {
-                    const card = document.createElement('div');
-                    card.className = 'video-card';
-                    card.onclick = () => playVideo(video.videoId);
-
-                    const thumbnail = video.videoThumbnails.find(t => t.quality === 'medium') || video.videoThumbnails[0];
-
-                    card.innerHTML = `
-                        <img src="${thumbnail.url}" alt="${video.title}">
-                        <div class="video-info">
-                            <div class="video-title">${video.title}</div>
-                            <div style="font-size:12px; color:#aaa;">${video.author}</div>
+            switch (code) {
+                // 1. 암호 리스트 보기
+                case "deviluseslist":
+                    fake404.style.display = "none";
+                    infoContainer.style.display = "block";
+                    infoContent.innerHTML = `
+                        <h2>🤫 비밀 암호 포털 명령어 목록</h2>
+                        <p>위장 화면 상태에서 아래 암호를 타이핑하고 엔터(Enter)를 누르세요.</p>
+                        <div class="code-box">
+                            deviluseslist : 현재 마스터 암호 목록 확인<br>
+                            devilusesgpt : ChatGPT 연결 (새 탭)<br>
+                            devilusesclaude : Claude AI 연결 (새 탭)<br>
+                            devilusesinstagram : 인스타그램 연결 (새 탭)<br>
+                            devilusesyoutube : 유튜브 우회 연결 가이드 및 버튼 활성화<br>
+                            devilusesob : 오션브롤 게임 연결 (사이트 내부 실행)<br>
+                            devilusesduck : DuckMaths 우회 게임 사이트 연결 (사이트 내부 실행)<br>
+                            devilusestoon : 네이버 웹툰 모바일 연결 (새 탭)<br>
+                            deviluseschat : tlk.io 비밀 채팅방 연결 (사이트 내부 실행)
                         </div>
                     `;
-                    grid.appendChild(card);
-                });
-            } catch (error) {
-                grid.innerHTML = "<p style='text-align:center; width:100%; color:red;'>에러가 발생했습니다. 잠시 후 다시 시도해 주세요.</p>";
-                console.error(error);
+                    break;
+
+                // 2. ChatGPT (보안 정책으로 새 탭 오픈)
+                case "devilusesgpt":
+                    fake404.style.display = "none";
+                    window.open("https://chatgpt.com", "_blank");
+                    break;
+
+                // 3. Claude (보안 정책으로 새 탭 오픈)
+                case "devilusesclaude":
+                    fake404.style.display = "none";
+                    window.open("https://claude.ai", "_blank");
+                    break;
+
+                // 4. 인스타그램 (보안 정책으로 새 탭 오픈)
+                case "devilusesinstagram":
+                    fake404.style.display = "none";
+                    window.open("https://www.instagram.com", "_blank");
+                    break;
+
+                // 5. 유튜브 전용 안내 및 연동 버튼
+                case "devilusesyoutube":
+                    fake404.style.display = "none";
+                    infoContainer.style.display = "block";
+                    infoContent.innerHTML = `
+                        <h2>📺 유튜브 우회 포털</h2>
+                        <button class="btn-youtube" onclick="openYoutubeProxy()">[youtube로 연결]</button>
+                        <div class="code-box" style="color: #ff9900; font-size: 16px;">
+                            💡 안내 문구:<br>
+                            "이비스 페인트에서 설정 -> 이비스어카운트 -> X로 변경 -> 이용 약관 -> 밑으로 스크롤"
+                        </div>
+                    `;
+                    break;
+
+                // 6. 오션브롤 게임 (사이트 내부 전체화면 구동)
+                case "devilusesob":
+                    fake404.style.display = "none";
+                    frameContainer.style.display = "block";
+                    targetFrame.src = "https://apple-melon.github.io/oceanbrawl/";
+                    break;
+
+                // 7. DuckMaths 게임 사이트 (사이트 내부 전체화면 구동)
+                case "devilusesduck":
+                    fake404.style.display = "none";
+                    frameContainer.style.display = "block";
+                    targetFrame.src = "https://duckmath.org/";
+                    break;
+
+                // 8. 모바일 네이버 웹툰 (보안 정책으로 새 탭 오픈, 모바일 주소가 방화벽 우회에 유리)
+                case "devilusestoon":
+                    fake404.style.display = "none";
+                    window.open("https://m.comic.naver.com", "_blank");
+                    break;
+
+                // 9. tlk.io 비밀 채팅방 (사이트 내부 전체화면 구동)
+                // 주소 뒤의 'secret-class-room' 부분을 원하는 방 이름으로 바꾸면 우리들만의 대화방이 됩니다.
+                case "deviluseschat":
+                    fake404.style.display = "none";
+                    frameContainer.style.display = "block";
+                    targetFrame.src = "https://tlk.io/secret-class-room";
+                    break;
+
+                default:
+                    // 등록되지 않은 암호는 위장 상태를 유지
+                    break;
             }
         }
 
-        // 비디오 스트리밍 주소를 직접 파싱하여 재생하는 로직
-        async function playVideo(videoId) {
-            const container = document.getElementById('playerContainer');
-            const player = document.getElementById('videoPlayer');
-            
-            try {
-                // 동영상 상세 정보 API 호출
-                const response = await fetch(`${proxyInstance}/api/v1/videos/${videoId}`);
-                const data = await response.json();
-                
-                // 재생 가능한 원본 비디오 스트림 주소 찾기
-                if (data.formatStreams && data.formatStreams.length > 0) {
-                    // 가장 첫 번째 스트림(보통 360p 또는 720p mp4) 주소를 가져옴
-                    const videoUrl = data.formatStreams[0].url;
-                    
-                    // 브라우저가 거부하는 iframe 대신, 내 사이트 내부의 video 태그에 직접 데이터 주입
-                    player.src = videoUrl;
-                    container.style.display = 'block';
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                } else {
-                    alert("재생 가능한 비디오 스트림을 찾을 수 없습니다.");
-                }
-            } catch (error) {
-                alert("영상을 불러오는 중 오류가 발생했습니다.");
-                console.error(error);
-            }
+        // 유튜브 연결 관리 전용 함수
+        function openYoutubeProxy() {
+            document.getElementById("infoContainer").style.display = "none";
+            document.getElementById("secretFrameContainer").style.display = "block";
+            document.getElementById("secretTargetFrame").src = myWorkerUrl;
         }
     </script>
 </body>
