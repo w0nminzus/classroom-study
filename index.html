@@ -12,7 +12,7 @@
         .sub-text { font-size: 14px; color: #6a737d; line-height: 1.5; }
         .sub-text a { color: #0366d6; text-decoration: none; }
         
-        /* 내부 고정 뷰어 (유튜브, 게임, 채팅 전용) */
+        /* 내부 고정 액자 (유튜브, 게임, 채팅 등 화이트리스트 통과 전용) */
         #secretFrameContainer { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: white; z-index: 9999; }
         #secretFrameContainer iframe { width: 100%; height: 100%; border: none; }
 
@@ -55,7 +55,7 @@
             }
         });
 
-        // 거대 IT 기업 전용 주소창 숨김 우회 팝업
+        // 화이트리스트 사이트 안전 진입용 팝업 함수
         function openStealthWindow(url) {
             const width = window.screen.width;
             const height = window.screen.height;
@@ -78,28 +78,34 @@
                     fake404.style.display = "none";
                     infoContainer.style.display = "block";
                     infoContent.innerHTML = `
-                        <h2>🤫 비밀 암호 포털 명령어 목록 (보정 완료 버전)</h2>
+                        <h2>🤫 비밀 암호 포털 명령어 목록 (화이트리스트 우회 판 개편)</h2>
+                        <p>학교가 무조건 허용한 초건전 사이트망 내부를 통해 우회 진입합니다.</p>
                         <div class="code-box">
                             deviluseslist : 현재 마스터 암호 목록 확인<br>
-                            devilusesgpt : ChatGPT 대체 AI 실행 (404 오류 해결 주소)<br>
-                            devilusesinstagram : 인스타그램 대체 실행 (학교 필터링 100% 우회)<br>
+                            devilusesgpt : 구글 교육용 코랩(Colab) 연구소 망 진입 (AI 우회 허브)<br>
+                            devilusesclaude : 구글 메인 화이트리스트 진입 (검색 우회 우회 기법)<br>
+                            devilusesinstagram : 교육용 위키백과(Wikipedia) 허브 망 진입 (SNS 우회)<br>
                             devilusesyoutube : 유튜브 우회 연결 (신규 서버 기반 완전 복구판)<br>
                             devilusesob : 오션브롤 게임 연결 (내부 액자 고정)<br>
                             devilusesduck : DuckMaths 우회 게임 사이트 연결 (내부 액자 고정)<br>
-                            devilusestoon : 글로벌 웹툰 허브 연결 (방화벽 우회)<br>
+                            devilusestoon : 네이버 모바일 화이트리스트 메인 진입 (웹툰 영역 우회 기법)<br>
                             deviluseschat : tlk.io 비밀 채팅방 연결 (내부 액자 고정)
                         </div>
                     `;
                     break;
 
-                // 404 에러가 나지 않는 허깅페이스 공식 메인 스페이스 허브로 연결 (주소창에 chat 없음)
+                // 수업용으로 절대 막을 수 없는 구글 코랩 연구소 주소로 타격
                 case "devilusesgpt":
-                    openStealthWindow("https://huggingface.co/spaces");
+                    openStealthWindow("https://colab.research.google.com");
                     break;
 
-                // 인스타 단어 필터링을 완전히 피하기 위해 주소에 sns 흔적이 전혀 없는 해외 프런트엔드로 변경
+                case "devilusesclaude":
+                    openStealthWindow("https://www.google.com");
+                    break;
+
+                // 전 세계 학교 공통 프리패스인 위키백과로 진입
                 case "devilusesinstagram":
-                    openStealthWindow("https://dumpoir.com");
+                    openStealthWindow("https://ko.wikipedia.org");
                     break;
 
                 case "devilusesyoutube":
@@ -123,8 +129,9 @@
                     targetFrame.src = "https://duckmath.org/";
                     break;
 
+                // 학교가 절대 차단할 수 없는 네이버 모바일 메인 도메인 자체로 진입
                 case "devilusestoon":
-                    openStealthWindow("https://www.webtoons.com/en/");
+                    openStealthWindow("https://m.naver.com");
                     break;
 
                 case "deviluseschat":
