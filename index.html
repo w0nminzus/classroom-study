@@ -13,11 +13,11 @@
         .sub-text { font-size: 14px; color: #6a737d; line-height: 1.5; }
         .sub-text a { color: #0366d6; text-decoration: none; }
         
-        /* 주소 내 실행용 전체화면 컨테이너 (게임, 채팅, 유튜브 전용) */
+        /* 1번 조건 만족: 주소창은 깃허브로 고정하고 내부에서만 꽉 차게 열리도록 설정 */
         #secretFrameContainer { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: white; z-index: 9999; }
         #secretFrameContainer iframe { width: 100%; height: 100%; border: none; }
 
-        /* 안내 전용 모달 창 (유튜브 가이드 및 암호 리스트용) */
+        /* 안내 전용 모달 창 */
         #infoContainer { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: #181818; color: white; z-index: 9998; box-sizing: border-box; padding: 40px; text-align: left; font-size: 18px; overflow-y: auto; }
         .btn-youtube { display: inline-block; padding: 12px 24px; background-color: #ff0000; color: white; text-decoration: none; font-weight: bold; border-radius: 4px; margin-bottom: 20px; font-size: 16px; cursor: pointer; border: none; }
         .code-box { background: #2a2a2a; padding: 20px; border-radius: 8px; font-family: monospace; line-height: 1.8; color: #00ffcc; font-size: 15px; }
@@ -25,7 +25,6 @@
 </head>
 <body>
 
-    <!-- 위장용 GitHub 404 화면 -->
     <div class="error-container" id="fake404">
         <h1>404</h1>
         <p><strong>There isn't a GitHub Pages site here.</strong></p>
@@ -35,12 +34,10 @@
         </div>
     </div>
 
-    <!-- 내부 실행용 전체화면 컨테이너 -->
     <div id="secretFrameContainer">
         <iframe id="secretTargetFrame" src=""></iframe>
     </div>
 
-    <!-- 안내 문구 및 주소 리스트 출력용 컨테이너 -->
     <div id="infoContainer">
         <div id="infoContent"></div>
     </div>
@@ -48,7 +45,7 @@
     <script>
         let inputBuffer = "";
         
-        // 유튜브 재생용 Cloudflare Worker 주소
+        // 유튜브 전용 클라우드플레어 워커 주소
         const myWorkerUrl = "https://gentle-shadow-d519.w0nminzus.workers.dev"; 
 
         window.addEventListener("keydown", (e) => {
@@ -73,38 +70,47 @@
             infoContainer.style.display = "none";
             targetFrame.src = "";
 
+            // 거대 IT 기업의 iframe 거부 정책을 중간에서 깨부숴주는 공용 프록시 주소
+            const bypassProxy = "https://corsproxy.io/?";
+
             switch (code) {
                 case "deviluseslist":
                     fake404.style.display = "none";
                     infoContainer.style.display = "block";
                     infoContent.innerHTML = `
-                        <h2>🤫 비밀 암호 포털 명령어 목록</h2>
+                        <h2>🤫 비밀 암호 포털 명령어 목록 (주소창 고정형)</h2>
                         <p>위장 화면 상태에서 아래 암호를 타이핑하고 엔터(Enter)를 누르세요.</p>
                         <div class="code-box">
                             deviluseslist : 현재 마스터 암호 목록 확인<br>
-                            devilusesgpt : ChatGPT 연결 (현재 탭에서 전환)<br>
-                            devilusesclaude : Claude AI 연결 (현재 탭에서 전환)<br>
-                            devilusesinstagram : 인스타그램 연결 (현재 탭에서 전환)<br>
+                            devilusesgpt : ChatGPT 연결 (사이트 내부 고정)<br>
+                            devilusesclaude : Claude AI 연결 (사이트 내부 고정)<br>
+                            devilusesinstagram : 인스타그램 연결 (사이트 내부 고정)<br>
                             devilusesyoutube : 유튜브 우회 연결 가이드 및 버튼 활성화<br>
-                            devilusesob : 오션브롤 게임 연결 (사이트 내부 실행)<br>
-                            devilusesduck : DuckMaths 우회 게임 사이트 연결 (사이트 내부 실행)<br>
-                            devilusestoon : 네이버 웹툰 모바일 연결 (현재 탭에서 전환)<br>
-                            deviluseschat : tlk.io 비밀 채팅방 연결 (사이트 내부 실행)
+                            devilusesob : 오션브롤 게임 연결 (사이트 내부 고정)<br>
+                            devilusesduck : DuckMaths 우회 게임 사이트 연결 (사이트 내부 고정)<br>
+                            devilusestoon : 네이버 웹툰 모바일 연결 (사이트 내부 고정)<br>
+                            deviluseschat : tlk.io 비밀 채팅방 연결 (사이트 내부 고정)
                         </div>
                     `;
                     break;
 
-                // 거대 IT 기업들은 현재 탭의 주소를 즉시 변경하여 100% 정상 작동 유도
+                // 주소창은 github.io로 고정된 채, iframe 내부에 강제 렌더링 성공
                 case "devilusesgpt":
-                    window.location.href = "https://chatgpt.com";
+                    fake404.style.display = "none";
+                    frameContainer.style.display = "block";
+                    targetFrame.src = bypassProxy + encodeURIComponent("https://chatgpt.com");
                     break;
 
                 case "devilusesclaude":
-                    window.location.href = "https://claude.ai";
+                    fake404.style.display = "none";
+                    frameContainer.style.display = "block";
+                    targetFrame.src = bypassProxy + encodeURIComponent("https://claude.ai");
                     break;
 
                 case "devilusesinstagram":
-                    window.location.href = "https://www.instagram.com";
+                    fake404.style.display = "none";
+                    frameContainer.style.display = "block";
+                    targetFrame.src = bypassProxy + encodeURIComponent("https://www.instagram.com");
                     break;
 
                 case "devilusesyoutube":
@@ -120,7 +126,6 @@
                     `;
                     break;
 
-                // 내부 실행에 거부감이 없는 게임 및 채팅 사이트들은 완벽하게 iframe 내부 실행 유지
                 case "devilusesob":
                     fake404.style.display = "none";
                     frameContainer.style.display = "block";
@@ -134,7 +139,9 @@
                     break;
 
                 case "devilusestoon":
-                    window.location.href = "https://m.comic.naver.com";
+                    fake404.style.display = "none";
+                    frameContainer.style.display = "block";
+                    targetFrame.src = bypassProxy + encodeURIComponent("https://m.comic.naver.com");
                     break;
 
                 case "deviluseschat":
