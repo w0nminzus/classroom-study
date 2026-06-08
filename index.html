@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page not found · GitHub Pages</title>
     <style>
-        /* GitHub 404 페이지 스타일 위장 */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background-color: #f9f9f9; color: #333; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; text-align: center; }
         .error-container { max-width: 800px; padding: 20px; }
         h1 { font-size: 80px; font-weight: 500; margin: 0; color: #24292e; }
@@ -13,11 +12,11 @@
         .sub-text { font-size: 14px; color: #6a737d; line-height: 1.5; }
         .sub-text a { color: #0366d6; text-decoration: none; }
         
-        /* 내부 실행 전용 컨테이너 (유튜브, 게임, 채팅 전용) */
+        /* 내부 실행 전용 컨테이너 (유튜브, 게임, 채팅용) */
         #secretFrameContainer { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: white; z-index: 9999; }
         #secretFrameContainer iframe { width: 100%; height: 100%; border: none; }
 
-        /* 안내 전용 모달 창 */
+        /* 안내 및 목록창 */
         #infoContainer { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: #181818; color: white; z-index: 9998; box-sizing: border-box; padding: 40px; text-align: left; font-size: 18px; overflow-y: auto; }
         .btn-youtube { display: inline-block; padding: 12px 24px; background-color: #ff0000; color: white; text-decoration: none; font-weight: bold; border-radius: 4px; margin-bottom: 20px; font-size: 16px; cursor: pointer; border: none; }
         .code-box { background: #2a2a2a; padding: 20px; border-radius: 8px; font-family: monospace; line-height: 1.8; color: #00ffcc; font-size: 15px; }
@@ -25,6 +24,7 @@
 </head>
 <body>
 
+    <!-- 위장용 GitHub 404 화면 -->
     <div class="error-container" id="fake404">
         <h1>404</h1>
         <p><strong>There isn't a GitHub Pages site here.</strong></p>
@@ -34,18 +34,18 @@
         </div>
     </div>
 
+    <!-- 주소 고정 내부 뷰어 -->
     <div id="secretFrameContainer">
         <iframe id="secretTargetFrame" src=""></iframe>
     </div>
 
+    <!-- 목록 출력용 창 -->
     <div id="infoContainer">
         <div id="infoContent"></div>
     </div>
 
     <script>
         let inputBuffer = "";
-        
-        // 원상복구된 복구용 클라우드플레어 워커 주소
         const myWorkerUrl = "https://gentle-shadow-d519.w0nminzus.workers.dev"; 
 
         window.addEventListener("keydown", (e) => {
@@ -59,7 +59,7 @@
             }
         });
 
-        // 거대 IT 기업 전용: 주소창은 안 보이지만 방화벽을 100% 뚫고 화면 깨짐이 없는 팝업창 실행 함수
+        // 주소창 감시 엔진을 무력화하는 독립 팝업 함수
         function openStealthWindow(url) {
             const width = window.screen.width;
             const height = window.screen.height;
@@ -82,50 +82,41 @@
                     fake404.style.display = "none";
                     infoContainer.style.display = "block";
                     infoContent.innerHTML = `
-                        <h2>🤫 비밀 암호 포털 명령어 목록 (유튜브 완전 복구판)</h2>
-                        <p>위장 화면 상태에서 아래 암호를 타이핑하고 엔터(Enter)를 누르세요.</p>
+                        <h2>🤫 비밀 암호 포털 명령어 목록 (브라우저 정책 완전 우회판)</h2>
+                        <p>금지 단어가 없는 청정 대피소 주소들로 재매핑되어 정상 구동됩니다.</p>
                         <div class="code-box">
                             deviluseslist : 현재 마스터 암호 목록 확인<br>
-                            devilusesgpt : ChatGPT 우회 연결 (주소창 없는 팝업형태 구동)<br>
-                            devilusesclaude : Claude AI 우회 연결 (주소창 없는 팝업형태 구동)<br>
-                            devilusesinstagram : 인스타그램 우회 연결 (주소창 없는 팝업형태 구동)<br>
-                            devilusesyoutube : 유튜브 우회 연결 가이드 및 버튼 활성화 (완벽 복구)<br>
-                            devilusesob : 오션브롤 게임 연결 (사이트 내부 고정)<br>
-                            devilusesduck : DuckMaths 우회 게임 사이트 연결 (사이트 내부 고정)<br>
-                            devilusestoon : 네이버 웹툰 모바일 연결 (주소창 없는 팝업형태 구동)<br>
-                            deviluseschat : tlk.io 비밀 채팅방 연결 (사이트 내부 고정)
+                            devilusesgpt : ChatGPT 대체 AI 실행 (주소 필터링 안 걸리는 대피소)<br>
+                            devilusesinstagram : 인스타그램 대체 실행 (Imginn 기반)<br>
+                            devilusesyoutube : 유튜브 우회 연결 (신규 서버 완전 복구판)<br>
+                            devilusesob : 오션브롤 게임 연결 (내부 액자 고정)<br>
+                            devilusesduck : DuckMaths 우회 게임 사이트 연결 (내부 액자 고정)<br>
+                            devilusestoon : 글로벌 웹툰 허브 연결 (방화벽 우회)<br>
+                            deviluseschat : tlk.io 비밀 채팅방 연결 (내부 액자 고정)
                         </div>
                     `;
                     break;
 
-                // 하얗게 변하는 에러가 있는 거대 사이트들은 주소창과 툴바를 숨긴 팝업창으로 안전 이동 (방화벽 100% 통과)
+                // 주소창에 'chat'이나 'ai'가 없어 크롬 감시 장치가 패스하는 무적의 AI 주소
                 case "devilusesgpt":
-                    openStealthWindow("https://duckduckgo.com/chat"); // 학교 방화벽 프리 패스 AI 주소
+                    openStealthWindow("https://huggingface.co/spaces/cohere/coral");
                     break;
 
-                case "devilusesclaude":
-                    openStealthWindow("https://huggingface.co/chat"); // 개발자용 주소라 방화벽이 안막음
-                    break;
-
+                // 인스타 관련 금지어가 전혀 없는 해외 이미지 전용 저장소 주소
                 case "devilusesinstagram":
-                    openStealthWindow("https://www.picuki.com"); // SNS 차단 차단용 대체 인스타 뷰어
+                    openStealthWindow("https://imginn.com");
                     break;
 
-                // 우리의 심장, 유튜브 포털 원점 완벽 복구
+                // 1단계에서 교체한 새 서버 기반 유튜브 포털 작동
                 case "devilusesyoutube":
                     fake404.style.display = "none";
                     infoContainer.style.display = "block";
                     infoContent.innerHTML = `
-                        <h2>📺 유튜브 우회 포털</h2>
+                        <h2>📺 유튜브 우회 포털 (복구 완료)</h2>
                         <button class="btn-youtube" onclick="openYoutubeProxy()">[youtube로 연결]</button>
-                        <div class="code-box" style="color: #ff9900; font-size: 16px;">
-                            💡 안내 문구:<br>
-                            "이비스 페인트에서 설정 -> 이비스어카운트 -> X로 변경 -> 이용 약관 -> 밑으로 스크롤"
-                        </div>
                     `;
                     break;
 
-                // 내부 액자(iframe) 구동에 아무런 문제가 없는 우회 허브 및 게임, 채팅방
                 case "devilusesob":
                     fake404.style.display = "none";
                     frameContainer.style.display = "block";
@@ -138,8 +129,9 @@
                     targetFrame.src = "https://duckmath.org/";
                     break;
 
+                // comic, toon 같은 차단 키워드가 없는 글로벌 네이버 웹툰 주소
                 case "devilusestoon":
-                    openStealthWindow("https://m.comic.naver.com"); // 네이버 웹툰 완벽 구동
+                    openStealthWindow("https://www.webtoons.com/en/");
                     break;
 
                 case "deviluseschat":
