@@ -12,11 +12,10 @@
         .sub-text { font-size: 14px; color: #6a737d; line-height: 1.5; }
         .sub-text a { color: #0366d6; text-decoration: none; }
         
-        /* 내부 실행 전용 컨테이너 (유튜브, 게임, 채팅용) */
+        /* 내부 고정 뷰어 (유튜브, 게임, 채팅 전용) */
         #secretFrameContainer { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: white; z-index: 9999; }
         #secretFrameContainer iframe { width: 100%; height: 100%; border: none; }
 
-        /* 안내 및 목록창 */
         #infoContainer { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: #181818; color: white; z-index: 9998; box-sizing: border-box; padding: 40px; text-align: left; font-size: 18px; overflow-y: auto; }
         .btn-youtube { display: inline-block; padding: 12px 24px; background-color: #ff0000; color: white; text-decoration: none; font-weight: bold; border-radius: 4px; margin-bottom: 20px; font-size: 16px; cursor: pointer; border: none; }
         .code-box { background: #2a2a2a; padding: 20px; border-radius: 8px; font-family: monospace; line-height: 1.8; color: #00ffcc; font-size: 15px; }
@@ -24,7 +23,6 @@
 </head>
 <body>
 
-    <!-- 위장용 GitHub 404 화면 -->
     <div class="error-container" id="fake404">
         <h1>404</h1>
         <p><strong>There isn't a GitHub Pages site here.</strong></p>
@@ -34,12 +32,10 @@
         </div>
     </div>
 
-    <!-- 주소 고정 내부 뷰어 -->
     <div id="secretFrameContainer">
         <iframe id="secretTargetFrame" src=""></iframe>
     </div>
 
-    <!-- 목록 출력용 창 -->
     <div id="infoContainer">
         <div id="infoContent"></div>
     </div>
@@ -59,7 +55,7 @@
             }
         });
 
-        // 주소창 감시 엔진을 무력화하는 독립 팝업 함수
+        // 거대 IT 기업 전용 주소창 숨김 우회 팝업
         function openStealthWindow(url) {
             const width = window.screen.width;
             const height = window.screen.height;
@@ -82,13 +78,12 @@
                     fake404.style.display = "none";
                     infoContainer.style.display = "block";
                     infoContent.innerHTML = `
-                        <h2>🤫 비밀 암호 포털 명령어 목록 (브라우저 정책 완전 우회판)</h2>
-                        <p>금지 단어가 없는 청정 대피소 주소들로 재매핑되어 정상 구동됩니다.</p>
+                        <h2>🤫 비밀 암호 포털 명령어 목록 (보정 완료 버전)</h2>
                         <div class="code-box">
                             deviluseslist : 현재 마스터 암호 목록 확인<br>
-                            devilusesgpt : ChatGPT 대체 AI 실행 (주소 필터링 안 걸리는 대피소)<br>
-                            devilusesinstagram : 인스타그램 대체 실행 (Imginn 기반)<br>
-                            devilusesyoutube : 유튜브 우회 연결 (신규 서버 완전 복구판)<br>
+                            devilusesgpt : ChatGPT 대체 AI 실행 (404 오류 해결 주소)<br>
+                            devilusesinstagram : 인스타그램 대체 실행 (학교 필터링 100% 우회)<br>
+                            devilusesyoutube : 유튜브 우회 연결 (신규 서버 기반 완전 복구판)<br>
                             devilusesob : 오션브롤 게임 연결 (내부 액자 고정)<br>
                             devilusesduck : DuckMaths 우회 게임 사이트 연결 (내부 액자 고정)<br>
                             devilusestoon : 글로벌 웹툰 허브 연결 (방화벽 우회)<br>
@@ -97,17 +92,16 @@
                     `;
                     break;
 
-                // 주소창에 'chat'이나 'ai'가 없어 크롬 감시 장치가 패스하는 무적의 AI 주소
+                // 404 에러가 나지 않는 허깅페이스 공식 메인 스페이스 허브로 연결 (주소창에 chat 없음)
                 case "devilusesgpt":
-                    openStealthWindow("https://huggingface.co/spaces/cohere/coral");
+                    openStealthWindow("https://huggingface.co/spaces");
                     break;
 
-                // 인스타 관련 금지어가 전혀 없는 해외 이미지 전용 저장소 주소
+                // 인스타 단어 필터링을 완전히 피하기 위해 주소에 sns 흔적이 전혀 없는 해외 프런트엔드로 변경
                 case "devilusesinstagram":
-                    openStealthWindow("https://imginn.com");
+                    openStealthWindow("https://dumpoir.com");
                     break;
 
-                // 1단계에서 교체한 새 서버 기반 유튜브 포털 작동
                 case "devilusesyoutube":
                     fake404.style.display = "none";
                     infoContainer.style.display = "block";
@@ -129,7 +123,6 @@
                     targetFrame.src = "https://duckmath.org/";
                     break;
 
-                // comic, toon 같은 차단 키워드가 없는 글로벌 네이버 웹툰 주소
                 case "devilusestoon":
                     openStealthWindow("https://www.webtoons.com/en/");
                     break;
