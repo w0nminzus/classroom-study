@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page not found · GitHub Pages</title>
     <style>
-        /* GitHub 404 페이지 스타일 위장 */
         body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background-color: #f9f9f9; color: #333; margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh; text-align: center; }
         .error-container { max-width: 800px; padding: 20px; }
         h1 { font-size: 80px; font-weight: 500; margin: 0; color: #24292e; }
@@ -13,11 +12,10 @@
         .sub-text { font-size: 14px; color: #6a737d; line-height: 1.5; }
         .sub-text a { color: #0366d6; text-decoration: none; }
         
-        /* 모든 주소가 사이트 내에서 꽉 차게 열리도록 하는 컨테이너 */
+        /* 모든 사이트가 브라우저 내에서 꽉 차게 열리도록 설정 */
         #secretFrameContainer { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: white; z-index: 9999; }
         #secretFrameContainer iframe { width: 100%; height: 100%; border: none; }
 
-        /* 안내 전용 모달 창 (유튜브 가이드 및 암호 리스트용) */
         #infoContainer { display: none; width: 100vw; height: 100vh; position: fixed; top: 0; left: 0; background: #181818; color: white; z-index: 9998; box-sizing: border-box; padding: 40px; text-align: left; font-size: 18px; overflow-y: auto; }
         .btn-youtube { display: inline-block; padding: 12px 24px; background-color: #ff0000; color: white; text-decoration: none; font-weight: bold; border-radius: 4px; margin-bottom: 20px; font-size: 16px; cursor: pointer; border: none; }
         .code-box { background: #2a2a2a; padding: 20px; border-radius: 8px; font-family: monospace; line-height: 1.8; color: #00ffcc; font-size: 15px; }
@@ -44,14 +42,12 @@
 
     <script>
         let inputBuffer = "";
-
-        // 유튜브 재생용 Cloudflare Worker 주소
         const myWorkerUrl = "https://gentle-shadow-d519.w0nminzus.workers.dev"; 
 
         window.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
                 handleSecretCode(inputBuffer);
-                inputBuffer = ""; // 버퍼 초기화
+                inputBuffer = ""; 
             } else {
                 if (e.key.length === 1) {
                     inputBuffer += e.key;
@@ -66,52 +62,50 @@
             const infoContent = document.getElementById("infoContent");
             const fake404 = document.getElementById("fake404");
 
-            // 호출할 때마다 이전 화면 기본 숨김 처리
             frameContainer.style.display = "none";
             infoContainer.style.display = "none";
             targetFrame.src = "";
 
             switch (code) {
-                // 1. 암호 리스트 보기
                 case "deviluseslist":
                     fake404.style.display = "none";
                     infoContainer.style.display = "block";
                     infoContent.innerHTML = `
-                        <h2>🤫 비밀 암호 포털 명령어 목록</h2>
+                        <h2>🤫 비밀 암호 포털 명령어 목록 (내부 고정 버전)</h2>
                         <p>위장 화면 상태에서 아래 암호를 타이핑하고 엔터(Enter)를 누르세요.</p>
                         <div class="code-box">
                             deviluseslist : 현재 마스터 암호 목록 확인<br>
-                            devilusesgpt : ChatGPT 연결 (새 탭)<br>
-                            devilusesclaude : Claude AI 연결 (새 탭)<br>
-                            devilusesinstagram : 인스타그램 연결 (새 탭)<br>
+                            devilusesgpt : ChatGPT 연결 (사이트 내부 실행)<br>
+                            devilusesclaude : Claude AI 연결 (사이트 내부 실행)<br>
+                            devilusesinstagram : 인스타그램 연결 (사이트 내부 실행)<br>
                             devilusesyoutube : 유튜브 우회 연결 가이드 및 버튼 활성화<br>
                             devilusesob : 오션브롤 게임 연결 (사이트 내부 실행)<br>
                             devilusesduck : DuckMaths 우회 게임 사이트 연결 (사이트 내부 실행)<br>
-                            devilusestoon : 네이버 웹툰 모바일 연결 (새 탭)<br>
+                            devilusestoon : 네이버 웹툰 모바일 연결 (사이트 내부 실행)<br>
                             deviluseschat : tlk.io 비밀 채팅방 연결 (사이트 내부 실행)
                         </div>
                     `;
                     break;
 
-                // 2. ChatGPT (보안 정책으로 새 탭 오픈)
+                // 이제 새 탭이 아니라, 내 우회 프록시 서버를 거쳐 iframe 내부에 강제로 띄웁니다!
                 case "devilusesgpt":
                     fake404.style.display = "none";
-                    window.open("https://chatgpt.com", "_blank");
+                    frameContainer.style.display = "block";
+                    targetFrame.src = `${myWorkerUrl}?proxy=${encodeURIComponent("https://chatgpt.com")}`;
                     break;
 
-                // 3. Claude (보안 정책으로 새 탭 오픈)
                 case "devilusesclaude":
                     fake404.style.display = "none";
-                    window.open("https://claude.ai", "_blank");
+                    frameContainer.style.display = "block";
+                    targetFrame.src = `${myWorkerUrl}?proxy=${encodeURIComponent("https://claude.ai")}`;
                     break;
 
-                // 4. 인스타그램 (보안 정책으로 새 탭 오픈)
                 case "devilusesinstagram":
                     fake404.style.display = "none";
-                    window.open("https://www.instagram.com", "_blank");
+                    frameContainer.style.display = "block";
+                    targetFrame.src = `${myWorkerUrl}?proxy=${encodeURIComponent("https://www.instagram.com")}`;
                     break;
 
-                // 5. 유튜브 전용 안내 및 연동 버튼
                 case "devilusesyoutube":
                     fake404.style.display = "none";
                     infoContainer.style.display = "block";
@@ -125,28 +119,24 @@
                     `;
                     break;
 
-                // 6. 오션브롤 게임 (사이트 내부 전체화면 구동)
                 case "devilusesob":
                     fake404.style.display = "none";
                     frameContainer.style.display = "block";
                     targetFrame.src = "https://apple-melon.github.io/oceanbrawl/";
                     break;
 
-                // 7. DuckMaths 게임 사이트 (사이트 내부 전체화면 구동)
                 case "devilusesduck":
                     fake404.style.display = "none";
                     frameContainer.style.display = "block";
                     targetFrame.src = "https://duckmath.org/";
                     break;
 
-                // 8. 모바일 네이버 웹툰 (보안 정책으로 새 탭 오픈, 모바일 주소가 방화벽 우회에 유리)
                 case "devilusestoon":
                     fake404.style.display = "none";
-                    window.open("https://m.comic.naver.com", "_blank");
+                    frameContainer.style.display = "block";
+                    targetFrame.src = `${myWorkerUrl}?proxy=${encodeURIComponent("https://m.comic.naver.com")}`;
                     break;
 
-                // 9. tlk.io 비밀 채팅방 (사이트 내부 전체화면 구동)
-                // 주소 뒤의 'secret-class-room' 부분을 원하는 방 이름으로 바꾸면 우리들만의 대화방이 됩니다.
                 case "deviluseschat":
                     fake404.style.display = "none";
                     frameContainer.style.display = "block";
@@ -154,12 +144,10 @@
                     break;
 
                 default:
-                    // 등록되지 않은 암호는 위장 상태를 유지
                     break;
             }
         }
 
-        // 유튜브 연결 관리 전용 함수
         function openYoutubeProxy() {
             document.getElementById("infoContainer").style.display = "none";
             document.getElementById("secretFrameContainer").style.display = "block";
